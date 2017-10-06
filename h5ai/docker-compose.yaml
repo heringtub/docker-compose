@@ -1,0 +1,16 @@
+version: '2'
+services: 
+  h5ai_nginx:
+    build: ./nginx/
+    links: 
+      - h5ai_php_fpm:php
+    ports: 
+      - "8080:80"
+    volumes:
+      - /mnt/www/:/var/www/html/
+  h5ai_php_fpm:
+    build: ./php/ 
+    expose: 
+      - "9000"
+    volumes:
+      - /mnt/www/:/var/www/html/
