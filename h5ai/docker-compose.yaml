@@ -21,7 +21,7 @@ services:
         volumes:
             - ./www:/var/www/html
     rsshd:
-        image: rsshd:2.3.4
+        image: daocloud.io/buxiaomo/rsshd:2.3.4
         ports:
             - 2222:22/tcp
         networks:
