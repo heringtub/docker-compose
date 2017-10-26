@@ -24,6 +24,8 @@ services:
         image: daocloud.io/buxiaomo/rsshd:2.3.4
         ports:
             - 2222:22/tcp
+        environment:
+            - PASSWORD=root
         networks:
             h5ai:
                 aliases:
