@@ -8,5 +8,5 @@ touch authorized_keys
 ```
 # 上传文件命令
 ```
-scp -P 2222 authorized_keys root@file.splunk.org.cn:/root/
+scp -P 2222 authorized_keys root@xxx.xxx.xxx.xxx:/root/
 ```
