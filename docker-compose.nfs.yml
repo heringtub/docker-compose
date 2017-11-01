@@ -1,0 +1,26 @@
+version: '2'
+services:
+    nfs-server:
+        image: fuzzle/docker-nfs-server
+        privileged: true
+        restart: always
+        ports:
+            - 111:111
+            - 111:111/udp
+            - 2049:2049
+            - 2049:2049/udp
+            - 32765:32765
+            - 32765:32765/udp
+            - 32766:32766
+            - 32766:32766/udp
+            - 32767:32767
+            - 32767:32767/udp
+            - 32768:32768
+            - 32769:32769/udp
+        environment:
+            - NFS_EXPORT_DIR_1=/nfs
+            - NFS_EXPORT_DOMAIN_1=\*
+            - NFS_EXPORT_OPTIONS_1=rw,insecure,no_subtree_check,no_root_squash,fsid=1
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /nfs:/nfs
