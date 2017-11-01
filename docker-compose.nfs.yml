@@ -24,3 +24,5 @@ services:
         volumes:
             - /etc/localtime:/etc/localtime:ro
             - /nfs:/nfs
+
+# yum install nfs-utils.x86_64 -y && mkdir /nfs && mount IP:/nfs /nfs && df -h | grep nfs
