@@ -1,0 +1,20 @@
+version: '2'
+services:
+    ftp_mysql:
+        image: mysql:5.7
+        hostname: mysql
+        ports:
+            - 3306:3306/tcp
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=ftp
+            - MYSQL_USER=ftp
+            - MYSQL_PASSWORD=ftp
+        networks:
+            ftp:
+                aliases:
+                    - ftp
+
+networks:
+    ftp:
+        external: true
