@@ -1,0 +1,53 @@
+version: '2'
+services:
+    nginx:
+        image: nginx:1.13.6-alpine
+        ports:
+            - 80:80/tcp
+        networks:
+            h5ai:
+                aliases:
+                    - nginx
+        volumes:
+            - ./www:/usr/share/nginx/html
+            - ./default.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./access.log:/var/log/nginx/access.log
+            - ./htpasswd:/etc/nginx/conf.d/htpasswd:ro
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: global
+            placement:
+                constraints: [node.role == manager]
+    php:
+        image: php:7.1.10-fpm-alpine3.4
+        networks:
+            h5ai:
+                aliases:
+                    - php
+        volumes:
+            - ./www:/var/www/html
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: global
+            placement:
+                constraints: [node.role == manager]
+    rsshd:
+        image: daocloud.io/buxiaomo/rsshd:2.3.4
+        ports:
+            - 2222:22/tcp
+        environment:
+            - PASSWORD=root@splunk.org.cn
+        networks:
+            h5ai:
+                aliases:
+                    - rsshd
+        volumes:
+            - ./www/share:/root
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: global
+            placement:
+                constraints: [node.role == manager]
+networks:
+    h5ai:

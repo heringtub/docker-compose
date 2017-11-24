@@ -1,0 +1,48 @@
+version: '2'
+services:
+    nginx:
+        image: daocloud.io/buxiaomo/nginx
+        ports:
+            - 80:80/tcp
+        volumes:
+            - /docker/ywclub/www:/usr/local/nginx/html/
+            - /docker/ywclub/nginx/nginx.conf:/usr/local/nginx/conf/conf.d/:ro
+        networks:
+            ywclub:
+                aliases:
+                    - nginx
+    php:
+        image: daocloud.io/buxiaomo/php
+        ports:
+            - 9000/tcp
+        volumes:
+            - /docker/ywclub/www:/usr/share/nginx/html
+        networks:
+            ywclub:
+                aliases:
+                    - php
+    redis:
+        image: daocloud.io/library/redis:3.2.8
+        volumes:
+            - /docker/ywclub/redis:/data
+        ports:
+            - 6379/tcp
+        networks:
+            ywclub:
+                aliases:
+                    - redis
+    mysql:
+        user: root
+        image: daocloud.io/library/mysql:5.7.18
+        volumes:
+            - /docker/ywclub/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=ywclub
+        networks:
+            ywclub:
+                aliases:
+                    - mysql
+networks:
+    ywclub:
+        external: true
