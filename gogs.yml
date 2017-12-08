@@ -16,14 +16,14 @@ services:
         volumes:
             - /docker/gogs/mysql:/var/lib/mysql
         environment:
-            - MYSQL_ROOT_PASSWORD=liu123...
+            - MYSQL_ROOT_PASSWORD=root
             - MYSQL_DATABASE=gogs
             - MYSQL_USER=gogs
             - MYSQL_PASSWORD=gogs
         networks:
             gogs:
                 aliases:
-                    - zookeeper01
+                    - mysql
 networks:
     gogs:
         external: true
