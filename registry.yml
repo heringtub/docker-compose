@@ -18,6 +18,7 @@ services:
 networks:
     registry:
         external: true
+
 # Registry主机
 # openssl req -newkey rsa:4096 -nodes -sha256 -keyout hub.xmitd.com.key -x509 -days 365 -out hub.xmitd.com.crt
 # Client主机
