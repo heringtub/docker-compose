@@ -144,4 +144,4 @@ networks:
 
 # docker stack deploy -c splunk.yml splunk
 # When seen three times "Waiting for web server"，you will to run command:
-# docker service scale splunk_indexer01=1 splunk_indexer02=1
+# docker service scale splunk_indexer01=1 splunk_indexer02=1 -d
