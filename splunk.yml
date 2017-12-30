@@ -4,8 +4,8 @@ services:
         image: splunk/splunk:7.0.0
         hostname: splunkserver
         environment:
+            - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_ENABLE_DEPLOY_SERVER=true
-            - SPLUNK_START_ARGS=--accept-license
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_CMD_1=edit cluster-config -mode master -replication_factor 2 -search_factor 2 -secret admin -cluster_label swarm -auth admin:changeme
             - SPLUNK_CMD_2=restart
@@ -38,7 +38,7 @@ services:
         image: splunk/splunk:7.0.0
         hostname: indexer01
         environment:
-            - SPLUNK_START_ARGS=--accept-license
+            - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_CMD_1=disable webserver -auth admin:changeme
             - SPLUNK_CMD_2=edit cluster-config -mode slave -master_uri https://splunkserver:8089 -replication_port 9887 -secret admin -auth admin:changeme
@@ -73,7 +73,7 @@ services:
         image: splunk/splunk:7.0.0
         hostname: indexer02
         environment:
-            - SPLUNK_START_ARGS=--accept-license
+            - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_CMD_1=disable webserver -auth admin:changeme
             - SPLUNK_CMD_2=edit cluster-config -mode slave -master_uri https://splunkserver:8089 -replication_port 9887 -secret admin -auth admin:changeme
@@ -99,6 +99,40 @@ services:
             placement:
                 constraints:
                     - node.hostname == Docker-Swarm-Indexer02
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+    forward01:
+        image: splunk/universalforwarder:7.0.0
+        hostname: forward01
+        environment:
+            - SPLUNK_START_ARGS=--accept-license --answer-yes
+            - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089
+            - SPLUNK_FORWARD_SERVER_1=indexer01:9997
+            - SPLUNK_FORWARD_SERVER_2=indexer02:9997
+        networks:
+            splunk:
+                aliases:
+                    - forward01
+        depends_on:
+            - splunkserver
+        volumes:
+            - /var/lib/docker/containers:/host/containers
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+            - /opt/splunk/var:/opt/splunk/var:rw
+            - /opt/splunk/etc:/opt/splunk/etc:rw
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.hostname == Docker-Swarm-N01
         logging:
             driver: json-file
             options:
