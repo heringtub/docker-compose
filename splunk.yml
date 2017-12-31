@@ -118,8 +118,8 @@ services:
             - /var/lib/docker/containers:/host/containers:ro
             - /var/log:/docker/log:ro
             - /var/run/docker.sock:/var/run/docker.sock:ro
-            - /opt/splunk/var:/opt/splunk/var:rw
-            - /opt/splunk/etc:/opt/splunk/etc:rw
+            - /opt/universalforwarder/var:/opt/splunk/var:rw
+            - /opt/universalforwarder/etc:/opt/splunk/etc:rw
         deploy:
             mode: global
             replicas: 0
