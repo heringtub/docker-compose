@@ -104,35 +104,30 @@ services:
             options:
                 max-file: '3'
                 max-size: 100m
-    forward01:
-        image: splunk/universalforwarder:7.0.0
-        hostname: forward01
+    forward-monitor-docker:
+        image: splunk/universalforwarder:7.0.0-monitor
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089
             - SPLUNK_FORWARD_SERVER_1=indexer01:9997
             - SPLUNK_FORWARD_SERVER_2=indexer02:9997
         networks:
-            splunk:
-                aliases:
-                    - forward01
-        depends_on:
-            - splunkserver
+            forward:
         volumes:
-            - /var/lib/docker/containers:/host/containers
-            - /var/run/docker.sock:/var/run/docker.sock
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+            - /var/lib/docker/containers:/host/containers:ro
+            - /var/log:/docker/log:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
             - /opt/splunk/var:/opt/splunk/var:rw
             - /opt/splunk/etc:/opt/splunk/etc:rw
         deploy:
-            mode: replicated
+            mode: global
             replicas: 0
             update_config:
-                parallelism: 1
-                delay: 10s
-            placement:
-                constraints:
-                    - node.hostname == Docker-Swarm-N01
+                parallelism: 2
+                delay: 15s
+            restart_policy:
+                condition: on-failure
         logging:
             driver: json-file
             options:
