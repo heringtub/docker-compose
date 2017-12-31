@@ -112,7 +112,7 @@ services:
             - SPLUNK_FORWARD_SERVER_1=indexer01:9997
             - SPLUNK_FORWARD_SERVER_2=indexer02:9997
         networks:
-            forward:
+            splunk:
         volumes:
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
             - /var/lib/docker/containers:/host/containers:ro
