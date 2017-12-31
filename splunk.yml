@@ -138,5 +138,9 @@ networks:
         external: true
 
 # docker stack deploy -c splunk.yml splunk
-# When seen three times "Waiting for web server"，you will to run command:
+
+# When splunk server initialization is complete run the following command to start index:
 # docker service scale splunk_indexer01=1 splunk_indexer02=1 -d
+
+# Run the following command to start universalforwarder after index initialization is completed
+# docker service scale splunk_forward-monitor-docker=1 -d
