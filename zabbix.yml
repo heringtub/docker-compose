@@ -1,0 +1,101 @@
+version: '3.4'
+services:
+    server:
+        image: zabbix/zabbix-server-mysql:ubuntu-3.4.4
+        hostname: zabbix-server
+        networks:
+            zabbix:
+                aliases:
+                    - zabbix-server
+        environment:
+            - DB_SERVER_HOST=mysql
+            - DB_SERVER_PORT=3306
+            - MYSQL_USER=zabbix
+            - MYSQL_PASSWORD=zabbix
+            - MYSQL_DATABASE=zabbix
+            - ZBX_DEBUGLEVEL=3
+        ports:
+            - "10051:10051"
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /etc/timezone:/etc/timezone:ro
+            - /nfs/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro
+            - /nfs/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro
+            - /nfs/zabbix/modules:/var/lib/zabbix/modules:ro
+            - /nfs/zabbix/enc:/var/lib/zabbix/enc:ro
+            - /nfs/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+            - /nfs/zabbix/mibs:/var/lib/zabbix/mibs:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == Docker-Swarm-Zabbix
+
+    web:
+        image: zabbix/zabbix-web-nginx-mysql:ubuntu-3.4.4
+        hostname: zabbix-web
+        networks:
+            zabbix:
+                aliases:
+                    - zabbix-web
+        environment:
+            - ZBX_SERVER_HOST=zabbix-server
+            - ZBX_SERVER_PORT=
+            - DB_SERVER_HOST=mysql
+            - DB_SERVER_PORT=3306
+            - MYSQL_USER=zabbix
+            - MYSQL_PASSWORD=zabbix
+            - MYSQL_DATABASE=zabbix
+            - PHP_TZ='Asia/Shanghai'
+            - ZBX_SERVER_NAME='zabbix server'
+        ports:
+            - 5001:80/tcp
+            - 5002:443/tcp
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /etc/timezone:/etc/timezone:ro
+            - /nfs/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro
+            - /nfs/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro
+            - /nfs/zabbix/modules:/var/lib/zabbix/modules:ro
+            - /nfs/zabbix/enc:/var/lib/zabbix/enc:ro
+            - /nfs/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+            - /nfs/zabbix/mibs:/var/lib/zabbix/mibs:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.role == worker
+                    - node.hostname != Docker-Swarm-MySQL
+                    - node.hostname != Docker-Swarm-Redis
+                    - node.hostname != Docker-Swarm-NFS
+    mysql:
+        image: mysql:5.7.20
+        hostname: mysql
+        networks:
+            zabbix:
+                aliases:
+                    - mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=zabbix
+            - MYSQL_USER=zabbix
+            - MYSQL_PASSWORD=zabbix
+        volumes:
+            - /mysql/zabbix:/var/lib/mysql
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == Docker-Swarm-MySQL
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+networks:
+    zabbix:
+        external: true
