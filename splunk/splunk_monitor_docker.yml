@@ -17,7 +17,7 @@ services:
             - collector_data:/data/
         environment:
             - COLLECTOR__SPLUNK_URL=output.splunk__url=https://splunkserver:8088/services/collector/event/1.0
-            - COLLECTOR__SPLUNK_TOKEN=output.splunk__token=d9a58ef6-583d-42af-b638-dd95b5b6a9d1
+            - COLLECTOR__SPLUNK_TOKEN=output.splunk__token=683588ac-0c1c-4cf5-bd12-bcda9c37bd09
             - COLLECTOR__SPLUNK_INSECURE=output.splunk__insecure=true
         deploy:
             mode: global

@@ -1,21 +1,16 @@
 version: '3.4'
 services:
-    universalforwarder:
+    uf:
         image: splunk/universalforwarder:7.0.0
-        restart: always
-        privileged: true
         networks:
             splunk:
                 aliases:
                     - universalforwarder
         volumes:
-            - /var/lib/docker/containers:/host/containers:ro
-            - /var/log:/docker/log:ro
-            - /var/run/docker.sock:/var/run/docker.sock:ro
             - /opt/universalforwarder/etc:/opt/splunk/etc
             - /opt/universalforwarder/var:/opt/splunk/var
         environment:
-            - SPLUNK_START_ARGS=--accept-license
+            - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089
             - SPLUNK_FORWARD_SERVER_1=indexer01:9997
             - SPLUNK_FORWARD_SERVER_2=indexer02:9997
