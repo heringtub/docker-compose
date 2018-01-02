@@ -2,8 +2,6 @@ version: '3.4'
 services:
     monitor_docker:
         image: outcoldsolutions/collectorfordocker:2.1.59.171210
-        restart: always
-        privileged: true
         networks:
             splunk:
                 aliases:
