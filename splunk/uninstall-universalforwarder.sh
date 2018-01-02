@@ -1,6 +1,4 @@
 #!/bin/bash
-docker service rm splunk_uf
-sleep 5
 HOST_LIST=(
     'root@10.3.236.30'
     'root@10.3.236.31'
@@ -17,10 +15,29 @@ HOST_LIST=(
     'root@10.3.236.41'
 )
 
-for HOST in ${HOST_LIST[*]};
-do
-    ssh ${HOST} 'rm -rf /opt/universalforwarder'
-    ssh ${HOST} 'mkdir -p /opt/universalforwarder/etc /opt/universalforwarder/var'
-done
-
-docker stack deploy -c universalforwarder.yml splunk
+case $1 in
+    install )
+        for HOST in ${HOST_LIST[*]};
+        do
+            ssh ${HOST} 'rm -rf /opt/universalforwarder'
+            ssh ${HOST} 'mkdir -p /opt/universalforwarder/etc /opt/universalforwarder/var'
+        done
+        docker stack deploy -c universalforwarder.yml splunk
+    ;;
+    rm )
+        docker service rm splunk_uf
+    ;;
+    uninstall )
+        docker service rm splunk_uf
+        sleep 5
+        for HOST in ${HOST_LIST[*]};
+        do
+            ssh ${HOST} 'rm -rf /opt/universalforwarder'
+            ssh ${HOST} 'mkdir -p /opt/universalforwarder/etc /opt/universalforwarder/var'
+        done
+        docker stack deploy -c universalforwarder.yml splunk
+    ;;
+    * )
+      echo "$0 install|uninstall|rm"
+    ;;
+esac
