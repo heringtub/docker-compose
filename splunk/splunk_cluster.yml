@@ -8,7 +8,8 @@ services:
             - SPLUNK_ENABLE_DEPLOY_SERVER=true
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_CMD_1=edit cluster-config -mode master -replication_factor 2 -search_factor 2 -secret admin -cluster_label swarm -auth admin:changeme
-            - SPLUNK_CMD_2=restart
+            - SPLUNK_CMD_2=set servername splunk-server -auth admin:changeme
+            - SPLUNK_CMD_3=restart
         ports:
             - 8000:8000/tcp
             - 8088:8088/tcp
@@ -40,9 +41,11 @@ services:
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_ENABLE_LISTEN=9997
+            - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089
             - SPLUNK_CMD_1=disable webserver -auth admin:changeme
             - SPLUNK_CMD_2=edit cluster-config -mode slave -master_uri https://splunkserver:8089 -replication_port 9887 -secret admin -auth admin:changeme
-            - SPLUNK_CMD_3=restart
+            - SPLUNK_CMD_3=set servername indexer01 -auth admin:changeme
+            - SPLUNK_CMD_4=restart
         networks:
             splunk:
                 aliases:
@@ -73,9 +76,11 @@ services:
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_ENABLE_LISTEN=9997
+            - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089
             - SPLUNK_CMD_1=disable webserver -auth admin:changeme
             - SPLUNK_CMD_2=edit cluster-config -mode slave -master_uri https://splunkserver:8089 -replication_port 9887 -secret admin -auth admin:changeme
-            - SPLUNK_CMD_3=restart
+            - SPLUNK_CMD_3=set servername indexer02 -auth admin:changeme
+            - SPLUNK_CMD_4=restart
         networks:
             splunk:
                 aliases:
