@@ -7,13 +7,13 @@ services:
       environment:
         TZ: 'Asia/Shanghai'
         GITLAB_OMNIBUS_CONFIG: |
-          external_url 'http://gitlab.ywclub.org'
+          external_url 'http://gitlab.xmitd.com'
           gitlab_rails['time_zone'] = 'Asia/Shanghai'
           gitlab_rails['smtp_enable'] = true
           gitlab_rails['smtp_address'] = "smtp.mxhichina.com"
           gitlab_rails['smtp_port'] = 465
           gitlab_rails['smtp_user_name'] = "gitlab@ywclub.org"
-          gitlab_rails['smtp_password'] = "Liu131131..."
+          gitlab_rails['smtp_password'] = "xxxxxxxx"
           gitlab_rails['smtp_authentication'] = "login"
           #gitlab_rails['smtp_enable_starttls_auto'] = true
           gitlab_rails['smtp_tls'] = true
@@ -23,6 +23,6 @@ services:
         - '443:443'
         - '22:22'
       volumes:
-        - /Users/mo/Docker/config:/etc/gitlab
-        - /Users/mo/Docker/data:/var/opt/gitlab
-        - /Users/mo/Docker/logs:/var/log/gitlab
+        - /nfs/gitlab/config:/etc/gitlab
+        - /nfs/gitlab/data:/var/opt/gitlab
+        - /nfs/gitlab/logs:/var/log/gitlab
