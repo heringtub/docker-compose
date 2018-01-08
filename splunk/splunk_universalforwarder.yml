@@ -1,7 +1,7 @@
 version: '3.4'
 services:
     uf:
-        image: splunk/universalforwarder:7.0.0
+        image: daocloud.io/buxiaomo/universalforwarder:7.0.0
         networks:
             splunk:
                 aliases:
@@ -9,6 +9,7 @@ services:
         volumes:
             - /opt/universalforwarder/etc:/opt/splunk/etc
             - /opt/universalforwarder/var:/opt/splunk/var
+            - /var/run/docker.sock:/var/run/docker.sock:ro
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089

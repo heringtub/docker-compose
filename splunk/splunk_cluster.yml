@@ -1,7 +1,7 @@
 version: '3.4'
 services:
     server:
-        image: splunk/splunk:7.0.0
+        image: daocloud.io/buxiaomo/splunk:7.0.0
         hostname: splunkserver
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
@@ -36,7 +36,7 @@ services:
                 max-file: '3'
                 max-size: 100m
     indexer01:
-        image: splunk/splunk:7.0.0
+        image: daocloud.io/buxiaomo/splunk:7.0.0
         hostname: indexer01
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
@@ -71,7 +71,7 @@ services:
                 max-file: '3'
                 max-size: 100m
     indexer02:
-        image: splunk/splunk:7.0.0
+        image: daocloud.io/buxiaomo/splunk:7.0.0
         hostname: indexer02
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
