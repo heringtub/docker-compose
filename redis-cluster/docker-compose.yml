@@ -1,7 +1,7 @@
 version: '3.4'
 services:
     redis-haproxy:
-        image: hub.xmitd.com/swarm/redis:4.0.6
+        image: haproxy:1.8.3
         hostname: redis-haproxy
         networks:
             redis:
@@ -17,7 +17,7 @@ services:
                 constraints:
                     - node.labels.storage == nfs
     redis-master:
-        image: hub.xmitd.com/swarm/redis:4.0.6
+        image: redis:4.0.6
         hostname: redis-master
         networks:
             redis:
@@ -33,7 +33,7 @@ services:
                 constraints:
                     - node.labels.storage == nfs
     redis-slave:
-        image: hub.xmitd.com/swarm/redis:4.0.6
+        image: redis:4.0.6
         hostname: redis-slave
         command: redis-server --slaveof redis-master 6379
         networks:
@@ -50,7 +50,7 @@ services:
                 constraints:
                     - node.labels.storage == nfs
     redis-sentinel:
-        image: hub.xmitd.com/swarm/redis:4.0.6
+        image: redis:4.0.6
         hostname: redis-sentinel
         command: redis-sentinel /etc/redis/sentinel.conf --sentinel
         networks:
