@@ -1,0 +1,72 @@
+version: '3.4'
+services:
+    redis-haproxy:
+        image: hub.xmitd.com/swarm/redis:4.0.6
+        hostname: redis-haproxy
+        networks:
+            redis:
+                aliases:
+                    - redis-haproxy
+        volumes:
+            - ./redis-haproxy:/usr/local/etc/haproxy:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.labels.storage == nfs
+    redis-master:
+        image: hub.xmitd.com/swarm/redis:4.0.6
+        hostname: redis-master
+        networks:
+            redis:
+                aliases:
+                    - redis-master
+        volumes:
+            - ./redis-master:/data:rw
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.labels.storage == nfs
+    redis-slave:
+        image: hub.xmitd.com/swarm/redis:4.0.6
+        hostname: redis-slave
+        command: redis-server --slaveof redis-master 6379
+        networks:
+            redis:
+                aliases:
+                    - redis-slave
+        volumes:
+            - ./redis-slave:/data:rw
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.labels.storage == nfs
+    redis-sentinel:
+        image: hub.xmitd.com/swarm/redis:4.0.6
+        hostname: redis-sentinel
+        command: redis-sentinel /etc/redis/sentinel.conf --sentinel
+        networks:
+            redis:
+                aliases:
+                    - redis-sentinel
+        volumes:
+            - ./redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf:rw
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.labels.storage == nfs
+
+networks:
+    redis:
+        external: true
