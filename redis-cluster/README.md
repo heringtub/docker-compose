@@ -26,3 +26,9 @@ Redis: https://hub.docker.com/_/redis/
 docker network create -d overlay redis
 docker stack deploy -c docker-compose.yml rediscluster
 ```
+
+
+
+# haproxy高可用
+
+调整 `redis-haproxy` 副本数即可（未测试）
