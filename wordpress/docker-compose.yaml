@@ -6,7 +6,7 @@ services:
         ports:
             - 80:80/tcp
         networks:
-            xbclub:
+            wordpress:
                 aliases:
                     - nginx
         volumes:
@@ -22,7 +22,7 @@ services:
         image: wordpress:4.9.1-php7.1-fpm-alpine
         hostname: php
         networks:
-            xbclub:
+            wordpress:
                 aliases:
                     - wordpress
         environment:
@@ -44,7 +44,7 @@ services:
         image: mysql:5.7.20
         hostname: mysql
         networks:
-            xbclub:
+            wordpress:
                 aliases:
                     - mysql
         environment:
@@ -61,7 +61,7 @@ services:
         image: redis:4.0.6
         hostname: redis
         networks:
-            xbclub:
+            wordpress:
                 aliases:
                     - redis
         volumes:
@@ -73,5 +73,5 @@ services:
                 max-file: '3'
                 max-size: 100m
 networks:
-    xbclub:
+    wordpress:
         external: true
