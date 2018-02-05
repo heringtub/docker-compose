@@ -10,13 +10,9 @@ services:
             - SPLUNK_CMD_1=edit cluster-config -mode master -replication_factor 2 -search_factor 2 -secret admin -cluster_label swarm -auth admin:changeme
             - SPLUNK_CMD_2=set servername splunk-server -auth admin:changeme
             - SPLUNK_CMD_3=restart
-        ports:
-            - 8000:8000/tcp
-            - 8088:8088/tcp
         networks:
-            splunk:
-                aliases:
-                    - splunkserver
+            network_mode: "host"
+            # splunk: {}
         volumes:
             - /opt/splunk/var:/opt/splunk/var:rw
             - /opt/splunk/etc:/opt/splunk/etc:rw
@@ -29,7 +25,7 @@ services:
                 delay: 10s
             placement:
                 constraints:
-                    - node.hostname == Docker-Swarm-Splunk
+                    - node.hostname == paas02
         logging:
             driver: json-file
             options:
@@ -45,11 +41,11 @@ services:
             - SPLUNK_CMD_1=disable webserver -auth admin:changeme
             - SPLUNK_CMD_2=edit cluster-config -mode slave -master_uri https://splunkserver:8089 -replication_port 9887 -secret admin -auth admin:changeme
             - SPLUNK_CMD_3=set servername indexer01 -auth admin:changeme
-            - SPLUNK_CMD_4=restart
+            - SPLUNK_CMD_4=edit licenser-localslave -master_uri 'https://splunkserver:8089' -auth admin:changeme
+            - SPLUNK_CMD_5=restart
         networks:
-            splunk:
-                aliases:
-                    - indexer01
+            network_mode: "host"
+            # splunk: {}
         depends_on:
             - splunkserver
         volumes:
@@ -64,7 +60,7 @@ services:
                 delay: 10s
             placement:
                 constraints:
-                    - node.hostname == Docker-Swarm-Indexer01
+                    - node.hostname == paas03
         logging:
             driver: json-file
             options:
@@ -80,11 +76,11 @@ services:
             - SPLUNK_CMD_1=disable webserver -auth admin:changeme
             - SPLUNK_CMD_2=edit cluster-config -mode slave -master_uri https://splunkserver:8089 -replication_port 9887 -secret admin -auth admin:changeme
             - SPLUNK_CMD_3=set servername indexer02 -auth admin:changeme
-            - SPLUNK_CMD_4=restart
+            - SPLUNK_CMD_4=edit licenser-localslave -master_uri 'https://splunkserver:8089'
+            - SPLUNK_CMD_5=restart
         networks:
-            splunk:
-                aliases:
-                    - indexer02
+            # splunk: {}
+            network_mode: "host"
         depends_on:
             - splunkserver
         volumes:
@@ -99,7 +95,7 @@ services:
                 delay: 10s
             placement:
                 constraints:
-                    - node.hostname == Docker-Swarm-Indexer02
+                    - node.hostname == paas04
         logging:
             driver: json-file
             options:
@@ -107,7 +103,8 @@ services:
                 max-size: 100m
 networks:
     splunk:
-        external: true
+        external:
+            name: host
 # docker stack deploy -c splunk.yml splunk
 
 # When splunk server initialization is complete run the following command to start index:

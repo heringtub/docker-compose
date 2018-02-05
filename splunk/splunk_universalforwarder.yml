@@ -16,7 +16,11 @@ services:
             - SPLUNK_FORWARD_SERVER_1=indexer01:9997
             - SPLUNK_FORWARD_SERVER_2=indexer02:9997
         deploy:
-            mode: global
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
             restart_policy:
                 condition: any
             resources:
@@ -26,6 +30,9 @@ services:
                 reservations:
                     cpus: '0.05'
                     memory: 20M
+            placement:
+                constraints:
+                    - node.hostname == Docker-Swarm-M01
         logging:
             driver: json-file
             options:

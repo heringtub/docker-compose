@@ -2,9 +2,9 @@
 docker stack rm splunk
 
 HOST_LIST=(
-    'root@10.3.236.50'
-    'root@10.3.236.51'
-    'root@10.3.236.52'
+    'root@172.16.0.12'
+    'root@172.16.0.13'
+    'root@172.16.0.14'
 )
 for HOST in ${HOST_LIST[*]};
 do
@@ -12,7 +12,7 @@ do
     ssh ${HOST} 'mkdir -p /opt/splunk/etc /opt/splunk/var'
 done
 
-docker stack deploy -c splunk.yml splunk
+docker stack deploy -c splunk_cluster.yml splunk
 
 ECHO=0
 while true

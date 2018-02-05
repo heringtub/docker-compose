@@ -1,0 +1,126 @@
+version: '3.4'
+services:
+    nginx:
+        image: nginx:1.13.8-alpine
+        ports:
+            - 80:80/tcp
+        networks:
+            lrnmp:
+                aliases:
+                    - nginx
+        volumes:
+            - ./www:/var/www/html:rw
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.hostname == ngrokd
+    php:
+        image: php:5.6.33-fpm-alpine3.4
+        networks:
+            lrnmp:
+                aliases:
+                    - php
+        volumes:
+            - ./www:/var/www/html:rw
+            - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.hostname == ngrokd
+    mysql:
+        image: mysql:5.7.20
+        hostname: mysql
+        networks:
+            lrnmp:
+                aliases:
+                    - mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=lrnmp
+            - MYSQL_USER=lrnmp
+            - MYSQL_PASSWORD=lrnmp
+        volumes:
+            - ./mysql:/var/lib/mysql
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == ngrokd
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+    redis-haproxy:
+        image: daocloud.io/buxiaomo/haproxy:1.8.3-alpine
+        hostname: redis-haproxy
+        networks:
+            lrnmp:
+                aliases:
+                    - redis-haproxy
+        volumes:
+            - ./redis/redis-haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: global
+           replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+    redis-sentinel:
+        image: daocloud.io/buxiaomo/redis:4.0.7-alpine
+        hostname: redis-sentinel
+        command: redis-sentinel /etc/sentinel.conf --sentinel
+        networks:
+            lrnmp:
+                aliases:
+                    - redis-sentinel
+        volumes:
+            - ./redis/redis-sentinel/sentinel.conf:/etc/sentinel.conf:rw
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+    redis-master:
+        image: daocloud.io/buxiaomo/redis:4.0.7-alpine
+        hostname: redis-master
+        networks:
+            lrnmp:
+                aliases:
+                    - redis-master
+        volumes:
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+    redis-slave:
+        image: daocloud.io/buxiaomo/redis:4.0.7-alpine
+        hostname: redis-slave
+        command: redis-server --slaveof redis-master 6379
+        networks:
+            lrnmp:
+                aliases:
+                    - redis-slave
+        volumes:
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+networks:
+    lrnmp:
+        external: true

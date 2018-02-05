@@ -29,6 +29,3 @@ Docker-Swarm-NFS搭建NFS服务，挂载点为`/nfs`
 Docker-Swarm-Splunk，Docker-Swarm-index01，Docker-Swarm-index02节点挂载NFS服务器的`/nfs`目录
 
 启动方法，查看 `uninstall-splunk.sh` 与 `uninstall-universalforwarder.sh` 脚本逻辑
-
-
-

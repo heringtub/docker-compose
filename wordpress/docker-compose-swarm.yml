@@ -84,7 +84,7 @@ services:
                 max-size: 100m
 
     redis-haproxy:
-        image: redis:4.0.6
+        image: haproxy:1.8.3-alpine
         hostname: redis-haproxy
         networks:
             wordpress:
@@ -107,7 +107,6 @@ services:
                 aliases:
                     - redis-master
         volumes:
-            - /nfs/xbclub/redis/redis-master:/data:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -124,7 +123,6 @@ services:
                 aliases:
                     - redis-slave
         volumes:
-            - /nfs/xbclub/redis/redis-slave:/data:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -141,7 +139,7 @@ services:
                 aliases:
                     - redis-sentinel
         volumes:
-            - /nfs/xbclub/redis/redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf:ro
+            - ./redis/redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf:ro
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
