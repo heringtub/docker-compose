@@ -1,28 +1,28 @@
-version: '2'
+version: '3.4'
 services:
     gitlab:
-      image: 'twang2218/gitlab-ce-zh:9.3.4'
-      restart: unless-stopped
-      hostname: 'gitlab.ywclub.org'
-      environment:
-        TZ: 'Asia/Shanghai'
-        GITLAB_OMNIBUS_CONFIG: |
-          external_url 'http://gitlab.xmitd.com'
-          gitlab_rails['time_zone'] = 'Asia/Shanghai'
-          gitlab_rails['smtp_enable'] = true
-          gitlab_rails['smtp_address'] = "smtp.mxhichina.com"
-          gitlab_rails['smtp_port'] = 465
-          gitlab_rails['smtp_user_name'] = "gitlab@ywclub.org"
-          gitlab_rails['smtp_password'] = "xxxxxxxx"
-          gitlab_rails['smtp_authentication'] = "login"
-          #gitlab_rails['smtp_enable_starttls_auto'] = true
-          gitlab_rails['smtp_tls'] = true
-          gitlab_rails['gitlab_email_from'] = 'gitlab@ywclub.org'
-      ports:
-        - '80:80'
-        - '443:443'
-        - '22:22'
-      volumes:
-        - /nfs/gitlab/config:/etc/gitlab
-        - /nfs/gitlab/data:/var/opt/gitlab
-        - /nfs/gitlab/logs:/var/log/gitlab
+        image: 'twang2218/gitlab-ce-zh:9.3.4'
+        hostname: 'gitlab.xmitd.com'
+        environment:
+            TZ: 'Asia/Shanghai'
+            GITLAB_OMNIBUS_CONFIG: |
+                external_url 'http://gitlab.xmitd.com'
+                gitlab_rails['time_zone'] = 'Asia/Shanghai'
+                gitlab_rails['smtp_enable'] = false
+        volumes:
+            - /gitlab/config:/etc/gitlab
+            - /gitlab/data:/var/opt/gitlab
+            - /gitlab/logs:/var/log/gitlab
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == gitlab
+        networks:
+            gitlab:
+                aliases:
+                    - gitlab
+networks:
+    gitlab:
+        external: true
