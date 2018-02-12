@@ -5,7 +5,6 @@ services:
         hostname: splunkserver
         environment:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
-            - SPLUNK_ENABLE_DEPLOY_SERVER=true
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_CMD_1=edit cluster-config -mode master -replication_factor 2 -search_factor 2 -secret admin -cluster_label swarm -auth admin:changeme
             - SPLUNK_CMD_2=set servername splunk-server -auth admin:changeme
@@ -27,6 +26,40 @@ services:
             placement:
                 constraints:
                     - node.hostname == splunkserver
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+    deployment:
+        image: daocloud.io/buxiaomo/splunk:7.0.0
+        hostname: deployment
+        environment:
+            - SPLUNK_START_ARGS=--accept-license --answer-yes
+            - SPLUNK_ENABLE_DEPLOY_SERVER=true
+            - SPLUNK_DEPLOYMENT_SERVER=splunkserver:8089
+            - SPLUNK_CMD_1=set servername deployment -auth admin:changeme
+            - SPLUNK_CMD_2=edit licenser-localslave -master_uri 'https://splunkserver:8089' -auth admin:changeme
+            - SPLUNK_CMD_3=restart
+        networks:
+            splunk:
+                aliases:
+                    - deployment
+        depends_on:
+            - splunkserver
+        volumes:
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+            - /opt/splunk/var:/opt/splunk/var:rw
+            - /opt/splunk/etc:/opt/splunk/etc:rw
+        deploy:
+            mode: replicated
+            replicas: 0
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.hostname == deployment
         logging:
             driver: json-file
             options:
@@ -107,7 +140,8 @@ services:
 networks:
     splunk:
         external: true
-# docker stack deploy -c splunk.yml splunk
+
+# docker stack deploy -c splunk_cluster.yml splunk
 
 # When splunk server initialization is complete run the following command to start index:
 # docker service scale splunk_indexer01=1 splunk_indexer02=1 -d
