@@ -1,20 +1,26 @@
 version: '2'
 services:
-    ftp_mysql:
+    mysql:
         image: mysql:5.7
-        hostname: mysql
         ports:
             - 3306:3306/tcp
         environment:
             - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_DATABASE=ftp
-            - MYSQL_USER=ftp
-            - MYSQL_PASSWORD=ftp
+            - MYSQL_DATABASE=pureftpd
+            - MYSQL_USER=pureftpd
+            - MYSQL_PASSWORD=pureftpd
         networks:
             ftp:
                 aliases:
-                    - ftp
-
+                    - mysql
+    ftp:
+        image: semprunl/pure-ftpd-mysql
+        environment:
+            - MYSQL_SERVER=mysql
+            - MYSQL_PORT=3306
+            - MYSQL_USER=root
+            - MYSQL_PASSWORD=root
+            - MYSQL_DATABASE=pureftpd
 networks:
     ftp:
         external: true

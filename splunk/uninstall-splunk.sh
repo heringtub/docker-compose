@@ -2,9 +2,12 @@
 docker stack rm splunk
 
 HOST_LIST=(
-    'root@172.16.0.12'
-    'root@172.16.0.13'
-    'root@172.16.0.14'
+    'root@10.3.236.31'
+    'root@10.3.236.32'
+    'root@10.3.236.33'
+    'root@10.3.236.34'
+    'root@10.3.236.35'
+    'root@10.3.236.36'
 )
 for HOST in ${HOST_LIST[*]};
 do
@@ -18,7 +21,7 @@ ECHO=0
 while true
 do
     N=$(docker service logs splunk_server 2> /dev/null | grep "Waiting for web server at" 2> /dev/null | wc -l)
-    if [[  ${N} -ge 3 ]]; then
+    if [[  ${N} -ge 2 ]]; then
         break
     else
         if [[  ${ECHO} -eq 0 ]]; then

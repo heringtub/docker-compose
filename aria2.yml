@@ -1,0 +1,15 @@
+version: '3.4'
+services:
+    aria2:
+        image: xujinkai/aria2-with-webui
+        restart: always
+        environment:
+            - SECRET=xiaomo
+        networks:
+            h5ai:
+                aliases:
+                    - aria2
+        volumes:
+            - ./www/share:/data
+            - ./aria2.conf:/conf/aria2.conf
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
