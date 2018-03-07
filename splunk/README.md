@@ -1,6 +1,6 @@
 # 基于Docker Swarm Cluster部署Splunk Cluster
 
-如何安装Docker：略
+如何安装Docker：略(请安装17.12以上的版本)
 
 如何配置Docker Swarm Cluster：略
 
