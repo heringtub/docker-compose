@@ -23,7 +23,7 @@ services:
                 delay: 10s
             placement:
                 constraints:
-                    - node.hostname == splunk-server
+                    - node.labels.splunk == server
         logging:
             driver: json-file
             options:
@@ -57,7 +57,7 @@ services:
                 delay: 10s
             placement:
                 constraints:
-                    - node.hostname == splunk-indexer01
+                    - node.labels.splunk == indexer01
         logging:
             driver: json-file
             options:
@@ -91,7 +91,7 @@ services:
                 delay: 10s
             placement:
                 constraints:
-                    - node.hostname == splunk-indexer02
+                    - node.labels.splunk == indexer02
         logging:
             driver: json-file
             options:

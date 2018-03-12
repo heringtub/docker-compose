@@ -4,7 +4,6 @@
 
 如何配置Docker Swarm Cluster：略
 
-
 节点：
 
 Docker-Swarm-Splunk（主节点,10.3.236.31）
