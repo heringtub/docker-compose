@@ -1,0 +1,88 @@
+version: '3.4'
+services:
+    nginx:
+        image: nginx:1.13.8-alpine
+        ports:
+            - 80:80/tcp
+        networks:
+            lnmp:
+                aliases:
+                    - nginx
+        volumes:
+            - ./www:/var/www/html:rw
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.lnmp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+    php:
+        image: php:5.6.33-fpm-alpine3.4
+        networks:
+            lnmp:
+                aliases:
+                    - php
+        volumes:
+            - ./www:/var/www/html:rw
+            - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+            - ./php/php.ini:/usr/local/etc/php/php.ini:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.lnmp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+    mysql:
+        image: mysql:5.7.20
+        hostname: mysql
+        networks:
+            lnmp:
+                aliases:
+                    - mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=lnmp
+            - MYSQL_USER=lnmp
+            - MYSQL_PASSWORD=lnmp
+        volumes:
+            - ./mysql:/var/lib/mysql
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.mysql == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+networks:
+    lnmp:
+        external: true
