@@ -78,7 +78,7 @@ services:
             - MYSQL_USER=lnmp
             - MYSQL_PASSWORD=lnmp
         volumes:
-            - ./mysql:/var/lib/mysql
+            - ./mysql/data:/var/lib/mysql
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
