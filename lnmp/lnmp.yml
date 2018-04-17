@@ -79,6 +79,7 @@ services:
             - MYSQL_PASSWORD=lnmp
         volumes:
             - ./mysql/data:/var/lib/mysql
+            - ./mysql/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
