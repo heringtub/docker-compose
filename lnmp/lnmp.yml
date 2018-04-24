@@ -8,9 +8,12 @@ services:
             lnmp:
                 aliases:
                     - nginx
+        configs:
+            - source: nginx
+              target: /etc/nginx/nginx.conf
+              mode: 0644
         volumes:
             - ./www:/var/www/html:rw
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -39,10 +42,15 @@ services:
             lnmp:
                 aliases:
                     - php
+        configs:
+            - source: php
+              target: /usr/local/etc/php/php.ini
+              mode: 0644
+            - source: uploads
+              target: /usr/local/etc/php/conf.d/uploads.ini
+              mode: 0644
         volumes:
             - ./www:/var/www/html:rw
-            - ./php/ext:/usr/local/etc/php/conf.d:ro
-            - ./php/php.ini:/usr/local/etc/php/php.ini:ro
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -77,9 +85,12 @@ services:
             - MYSQL_DATABASE=lnmp
             - MYSQL_USER=lnmp
             - MYSQL_PASSWORD=lnmp
+        configs:
+            - source: mysqld
+              target: /etc/mysql/mysql.conf.d/mysqld.cnf
+              mode: 0644
         volumes:
             - ./mysql/data:/var/lib/mysql
-            - ./mysql/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -101,6 +112,15 @@ services:
             options:
                 max-file: '3'
                 max-size: 100m
+configs:
+    nginx:
+        file: ./nginx/nginx.conf
+    php:
+        file: ./php/php.ini
+    uploads:
+        file: ./php/ext/uploads.ini
+    mysqld:
+        file: ./mysql/mysqld.cnf
 
 networks:
     lnmp:
