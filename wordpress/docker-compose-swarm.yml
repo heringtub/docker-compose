@@ -15,20 +15,26 @@ services:
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
-            replicas: 3
+            replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
             placement:
                 constraints:
-                    - node.role == worker
-                    - node.hostname != Docker-Swarm-MySQL
-                    - node.hostname != Docker-Swarm-Redis
-                    - node.hostname != Docker-Swarm-NFS
-                    - node.hostname != Docker-Swarm-Zabbix
-                    - node.hostname != Docker-Swarm-Splunk
-                    - node.hostname != Docker-Swarm-Indexer01
-                    - node.hostname != Docker-Swarm-Indexer02
+                    - node.labels.wp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
     wordpress:
         image: wordpress:4.9.1-php7.0-fpm
         hostname: php
@@ -48,17 +54,26 @@ services:
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
-            replicas: 3
+            replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
             placement:
                 constraints:
-                    - node.role == worker
-                    - node.hostname != Docker-Swarm-MySQL
-                    - node.hostname != Docker-Swarm-Redis
-                    - node.hostname != Docker-Swarm-NFS
-                    - node.hostname != Docker-Swarm-Zabbix
+                    - node.labels.wp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
     mysql:
         image: mysql:5.7.20
         hostname: mysql
@@ -74,9 +89,19 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
+            update_config:
+                parallelism: 1
+                delay: 10s
             placement:
                 constraints:
-                    - node.hostname == Docker-Swarm-MySQL
+                    - node.labels.wp == true
         logging:
             driver: json-file
             options:
@@ -96,9 +121,25 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
+            update_config:
+                parallelism: 1
+                delay: 10s
             placement:
                 constraints:
-                    - node.role == worker
+                    - node.labels.wp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
     redis-master:
         image: redis:4.0.6
         hostname: redis-master
@@ -111,9 +152,25 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
+            update_config:
+                parallelism: 1
+                delay: 10s
             placement:
                 constraints:
-                    - node.hostname == Docker-Swarm-Redis
+                    - node.labels.wp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
     redis-slave:
         image: redis:4.0.6
         hostname: redis-slave
@@ -127,9 +184,25 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
+            update_config:
+                parallelism: 1
+                delay: 10s
             placement:
                 constraints:
-                    - node.role == worker
+                    - node.labels.wp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
     redis-sentinel:
         image: redis:4.0.6
         hostname: redis-sentinel
@@ -144,9 +217,25 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
+            update_config:
+                parallelism: 1
+                delay: 10s
             placement:
                 constraints:
-                    - node.role == worker
+                    - node.labels.wp == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
 networks:
     wordpress:
         external: true
