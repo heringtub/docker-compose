@@ -15,14 +15,11 @@ services:
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
-            replicas: 1
+            replicas: 3
             resources:
                 limits:
                     cpus: '0.50'
                     memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -55,14 +52,11 @@ services:
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
-            replicas: 1
+            replicas: 3
             resources:
                 limits:
                     cpus: '0.50'
                     memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -98,9 +92,6 @@ services:
                 limits:
                     cpus: '0.50'
                     memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -131,6 +122,10 @@ services:
                 order: start-first
                 parallelism: 1
                 delay: 10s
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 50M
             placement:
                 constraints:
                     - node.labels.wp == true
@@ -152,14 +147,11 @@ services:
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
-            replicas: 1
+            replicas: 2
             resources:
                 limits:
                     cpus: '0.50'
-                    memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
+                    memory: 5M
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -188,9 +180,6 @@ services:
                 limits:
                     cpus: '0.50'
                     memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -220,9 +209,6 @@ services:
                 limits:
                     cpus: '0.50'
                     memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -253,9 +239,6 @@ services:
                 limits:
                     cpus: '0.50'
                     memory: 100M
-                reservations:
-                    cpus: '0.25'
-                    memory: 50M
             update_config:
                 parallelism: 1
                 delay: 10s
