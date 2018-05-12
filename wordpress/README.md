@@ -19,7 +19,3 @@ mkdir -p mysql/data
 docker  network create -d overlay wordpress
 docker stack deploy -c docker-compose-swarm.yml wp
 ```
-
-
-
-暂时记录这么多，后面再改

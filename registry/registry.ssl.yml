@@ -1,4 +1,4 @@
-version: '2'
+version: '3.4'
 services:
     registry:
         image: registry:2.6.1
@@ -11,7 +11,7 @@ services:
                     - registry
         volumes:
             - /var/lib/registry:/var/lib/registry:rw
-            - /home/certs:/certs
+            - ./certs:/certs
         environment:
             - REGISTRY_HTTP_TLS_KEY=/certs/gcr.io.key
             - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/gcr.io.crt
@@ -20,7 +20,16 @@ networks:
         external: true
 
 # Registry主机
-# openssl req -newkey rsa:4096 -nodes -sha256 -keyout hub.xmitd.com.key -x509 -days 365 -out hub.xmitd.com.crt
+
+# openssl genrsa -out ./hub.xmitd.com.pem 4096
+
+# openssl req -new -x509 -key ./hub.xmitd.com.pem \
+# -out hub.xmitd.com.crt -days 3650 -subj "/C=CN/ST=HB/L=WH/O=Mo/OU=Me/CN=hub.xmitd.com/emailAddress=95112082@qq.com"
+
+openssl req -newkey rsa:4096 \
+-nodes -sha256 -keyout hub.xmitd.com.key \
+-x509 -days 365 -out hub.xmitd.com.crt \
+-subj "/C=CN/ST=HB/L=WH/O=Mo/OU=Me/CN=hub.xmitd.com/emailAddress=95112082@qq.com"
 # Client主机
 # mkdir -p /etc/docker/certs.d/hub.xmitd.com
 # /home/certs/hub.xmitd.com.crt是registry主机生成的

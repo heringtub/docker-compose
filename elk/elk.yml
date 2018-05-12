@@ -1,0 +1,81 @@
+version: '3'
+services:
+    elasticsearch:
+        image: elasticsearch:5.6.9
+        ports:
+            - 9200:9200/tcp
+            - 9300:9300/tcp
+        networks:
+            elk:
+                aliases:
+                    - elasticsearch
+        volumes:
+            - ./elasticsearch/data:/usr/share/elasticsearch/data
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            # placement:
+            #     constraints:
+            #         - node.labels.elasticsearch == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+    # logstash:
+    #     image: logstash:5.6.9
+    #     command: -f /usr/share/logstash/config/conf.d/logstash.conf
+    #     networks:
+    #         elk:
+    #             aliases:
+    #                 - logstash
+    #     volumes:
+    #         - ./logstash/logstash.yml:/etc/logstash/logstash.yml:rw
+    #         - ./logstash/data:/var/lib/logstash:rw
+    #         - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    #     deploy:
+    #         mode: replicated
+    #         replicas: 1
+    #         update_config:
+    #             parallelism: 1
+    #             delay: 10s
+    #         # placement:
+    #         #     constraints:
+    #         #         - node.labels.elasticsearch == true
+    #     logging:
+    #         driver: json-file
+    #         options:
+    #             max-file: '3'
+    #             max-size: 100m
+
+    # kibana:
+    #     image: kibana:5.6.9
+    #     networks:
+    #         elk:
+    #             aliases:
+    #                 - kibana
+    #     volumes:
+    #         - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    #     deploy:
+    #         mode: replicated
+    #         replicas: 1
+    #         update_config:
+    #             parallelism: 1
+    #             delay: 10s
+    #         # placement:
+    #         #     constraints:
+    #         #         - node.labels.elasticsearch == true
+    #     logging:
+    #         driver: json-file
+    #         options:
+    #             max-file: '3'
+    #             max-size: 100m
+
+networks:
+    elk:
+        external: true
