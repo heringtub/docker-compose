@@ -48,7 +48,7 @@ services:
                     - php
         volumes:
             - ./www:/var/www/html:rw
-            - ./php/ext:/usr/local/etc/php/conf.d:ro
+            - ./php/ext/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
             - ./php/php.ini:/usr/local/etc/php/php.ini:ro
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
@@ -126,7 +126,7 @@ services:
                 aliases:
                     - phpmyadmin
         environment:
-            - PMA_HOST=mysql        
+            - PMA_HOST=mysql
         deploy:
             mode: replicated
             replicas: 1
