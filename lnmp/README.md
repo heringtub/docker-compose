@@ -1,13 +1,27 @@
 # 部署LNMP
-```
+
+​	集群环境下，配置文件必须分发到所有 `lnmp=true` 的节点上，否则会出现文件挂在不上的问题，或者使用nfs也可以。
+
+```shell
+# 创建lnmp服务使用的网络
 docker network create -d overlay lnmp
+# 创建mysql数据目录
 mkdir -p mysql/data
+# 标记实例运行的节点
 docker node update --label-add lnmp=true node01
 docker node update --label-add mysql=true node01
+# 部署应用
 docker stack deploy -c lnmp.yml lnmp
 ```
 
+​	服务访问链接：http://HOSTIP:80/phpinfo.php
+
+​	数据库管理链接：http://HOSTIP:3000
+
+
+
 # 更新 Nginx 版本
+
 修改lnmp.yml中 Nginx 服务的Image字段，然后执行
 ```
 docker stack deploy -c lnmp.yml lnmp

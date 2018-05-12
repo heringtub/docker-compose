@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3'
 services:
     nginx:
         image: nginx:1.13.8-alpine
@@ -8,16 +8,20 @@ services:
             lnmp:
                 aliases:
                     - nginx
-        configs:
-            - source: nginx
-              target: /etc/nginx/nginx.conf
-              mode: 0644
         volumes:
             - ./www:/var/www/html:rw
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
             update_config:
                 order: start-first
                 parallelism: 1
@@ -37,24 +41,26 @@ services:
                 max-size: 100m
 
     php:
-        image: php:5.6.33-fpm-alpine3.4
+        image: php:7.2.5-fpm-alpine3.7
         networks:
             lnmp:
                 aliases:
                     - php
-        configs:
-            - source: php
-              target: /usr/local/etc/php/php.ini
-              mode: 0644
-            - source: uploads
-              target: /usr/local/etc/php/conf.d/uploads.ini
-              mode: 0644
         volumes:
             - ./www:/var/www/html:rw
+            - ./php/ext:/usr/local/etc/php/conf.d:ro
+            - ./php/php.ini:/usr/local/etc/php/php.ini:ro
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
             replicas: 1
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 100M
+                reservations:
+                    cpus: '0.25'
+                    memory: 50M
             update_config:
                 order: start-first
                 parallelism: 1
@@ -63,7 +69,7 @@ services:
                 constraints:
                     - node.labels.lnmp == true
         # healthcheck:
-        #     test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+        #     test: ["CMD-SHELL", "curl -f http://localhost:9000/ || exit 1"]
         #     interval: 10s
         #     timeout: 5s
         #     retries: 3
@@ -85,12 +91,9 @@ services:
             - MYSQL_DATABASE=lnmp
             - MYSQL_USER=lnmp
             - MYSQL_PASSWORD=lnmp
-        configs:
-            - source: mysqld
-              target: /etc/mysql/mysql.conf.d/mysqld.cnf
-              mode: 0644
         volumes:
             - ./mysql/data:/var/lib/mysql
+            - ./mysql/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -112,15 +115,38 @@ services:
             options:
                 max-file: '3'
                 max-size: 100m
-configs:
-    nginx:
-        file: ./nginx/nginx.conf
-    php:
-        file: ./php/php.ini
-    uploads:
-        file: ./php/ext/uploads.ini
-    mysqld:
-        file: ./mysql/mysqld.cnf
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:4.7
+        hostname: phpmyadmin
+        ports:
+            - 3000:80/tcp
+        networks:
+            lnmp:
+                aliases:
+                    - phpmyadmin
+        environment:
+            - PMA_HOST=mysql        
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                order: start-first
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.mysql == true
+        # healthcheck:
+        #     test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+        #     interval: 10s
+        #     timeout: 5s
+        #     retries: 3
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
 
 networks:
     lnmp:
