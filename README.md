@@ -8,4 +8,5 @@
 | ------------- | ---------------- | ---- |
 | lnmp          | 一键部署lnmp环境 | N/A  |
 | redis-cluster | redis哨兵架构    | N/A  |
-|               |                  |      |
+| wordpress     | wp一键部署，包含redis缓存 | 高可用集群环境 |
+
