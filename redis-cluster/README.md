@@ -22,8 +22,9 @@ Redis: https://hub.docker.com/_/redis/
 
 # 启动
 
-```
+```shell
 docker network create -d overlay redis
+docker node update --label-add redis=true node01
 docker stack deploy -c docker-compose.yml rediscluster
 ```
 
@@ -31,4 +32,8 @@ docker stack deploy -c docker-compose.yml rediscluster
 
 # haproxy高可用
 
-调整 `redis-haproxy` 副本数即可（未测试）
+调整 `rediscluster_haproxy` 副本数
+
+```shell
+docker service scale rediscluster_haproxy=2 -d
+```

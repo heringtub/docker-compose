@@ -1,8 +1,10 @@
 version: '3.4'
 services:
-    redis-haproxy:
+    haproxy:
         image: haproxy:1.8.3
         hostname: redis-haproxy
+        ports:
+            - 6379:6379/tcp
         networks:
             redis:
                 aliases:
@@ -15,8 +17,14 @@ services:
             replicas: 1
             placement:
                 constraints:
-                    - node.labels.storage == nfs
-    redis-master:
+                    - node.labels.redis == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+    master:
         image: redis:4.0.6
         hostname: redis-master
         networks:
@@ -31,8 +39,14 @@ services:
             replicas: 1
             placement:
                 constraints:
-                    - node.labels.storage == nfs
-    redis-slave:
+                    - node.labels.redis == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+    slave:
         image: redis:4.0.6
         hostname: redis-slave
         command: redis-server --slaveof redis-master 6379
@@ -48,8 +62,14 @@ services:
             replicas: 1
             placement:
                 constraints:
-                    - node.labels.storage == nfs
-    redis-sentinel:
+                    - node.labels.redis == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+    sentinel:
         image: redis:4.0.6
         hostname: redis-sentinel
         command: redis-sentinel /etc/redis/sentinel.conf --sentinel
@@ -65,7 +85,12 @@ services:
             replicas: 1
             placement:
                 constraints:
-                    - node.labels.storage == nfs
+                    - node.labels.redis == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
 
 networks:
     redis:
