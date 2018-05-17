@@ -10,6 +10,9 @@ mkdir -p mysql/data
 # 标记实例运行的节点
 docker node update --label-add lnmp=true node01
 docker node update --label-add mysql=true node01
+# 所有节点创建网站目录
+cd ./www
+mkdir -p $(pwd)
 # 部署应用
 docker stack deploy -c lnmp.yml lnmp
 ```
