@@ -6,7 +6,7 @@ services:
             - SPLUNK_START_ARGS=--accept-license --answer-yes
             - SPLUNK_CMD_1=edit cluster-config -mode master -replication_factor 2 -search_factor 2 -secret admin -cluster_label swarm -auth admin:changeme
             - SPLUNK_CMD_2=set servername master -auth admin:changeme
-            - SPLUNK_CMD_3=add licenses /licenses/oem-tail-5-22.lic
+            - SPLUNK_CMD_3=add licenses /licenses/oem-develop-10t-08142018.license
             - SPLUNK_CMD_4=restart
         networks:
             splunk:
@@ -49,7 +49,7 @@ services:
             - /opt/splunk/etc:/opt/splunk/etc:rw
         deploy:
             mode: replicated
-            replicas: 0
+            replicas: 1
             update_config:
                 parallelism: 1
                 delay: 10s
@@ -81,7 +81,7 @@ services:
             - /opt/splunk/etc:/opt/splunk/etc:rw
         deploy:
             mode: replicated
-            replicas: 0
+            replicas: 1
             update_config:
                 parallelism: 1
                 delay: 10s

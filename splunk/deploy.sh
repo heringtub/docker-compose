@@ -7,9 +7,9 @@ fi
 
 # 清理数据文件
 HOST_LIST=(
-    'root@10.0.3.11'
-    'root@10.0.3.12'
-    'root@10.0.3.13'
+    'root@10.99.6.104'
+    'root@10.99.6.105'
+    'root@10.99.6.106'
 )
 for HOST in ${HOST_LIST[*]};
 do

@@ -26,10 +26,10 @@ networks:
 # openssl req -new -x509 -key ./hub.xmitd.com.pem \
 # -out hub.xmitd.com.crt -days 3650 -subj "/C=CN/ST=HB/L=WH/O=Mo/OU=Me/CN=hub.xmitd.com/emailAddress=95112082@qq.com"
 
-openssl req -newkey rsa:4096 \
--nodes -sha256 -keyout hub.xmitd.com.key \
--x509 -days 365 -out hub.xmitd.com.crt \
--subj "/C=CN/ST=HB/L=WH/O=Mo/OU=Me/CN=hub.xmitd.com/emailAddress=95112082@qq.com"
+# openssl req -newkey rsa:4096 \
+# -nodes -sha256 -keyout hub.xmitd.com.key \
+# -x509 -days 365 -out hub.xmitd.com.crt \
+# -subj "/C=CN/ST=HB/L=WH/O=Mo/OU=Me/CN=hub.xmitd.com/emailAddress=95112082@qq.com"
 # Client主机
 # mkdir -p /etc/docker/certs.d/hub.xmitd.com
 # /home/certs/hub.xmitd.com.crt是registry主机生成的
