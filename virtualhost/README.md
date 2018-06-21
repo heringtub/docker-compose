@@ -50,3 +50,34 @@ INSERT INTO `ftp_user` (`userid`, `passwd`, `uid`, `gid`, `homedir`, `shell`, `c
 chown -R 82:82 /var/www
 chmod 755 /var/www
 ```
+
+# 创建虚拟站点
+
+## 部署Nginx+PHP环境
+
+进入本项目的 `lnmp` 目录部署环境
+```
+docker node update --label-add lnmp=true Docker01
+docker network create -d overlay lnmp72
+docker stack deploy -c lnmp.yml lnmp72
+```
+
+## 创建虚拟站点FTP账户
+
+```
+INSERT INTO `ftp_user` (`userid`, `passwd`, `uid`, `gid`, `homedir`, `shell`, `count`, `accessed`, `modified`) VALUES ('xiaomo', ENCRYPT('xiaomo'), 82, 82, '/var/www/xiaomo', '/sbin/nologin', 0, '2018-03-02 13:45:45', '2018-03-02 13:45:45')
+```
+
+## 创建虚拟站点目录
+进入本项目的www目录创建虚拟站点根目录
+
+```
+mkdir xiaomo
+chown -R 82:82 /var/www
+chmod 755 /var/www
+```
+
+## 功能测试
+
+* FTP功能测试，登陆、上传、下载、创建目录等操作
+* 虚拟站点访问测试 `http://10.211.55.61:10000/xiaomo/index.php` 
