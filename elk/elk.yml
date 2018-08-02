@@ -1,16 +1,22 @@
-version: '3'
+version: '3.4'
 services:
     elasticsearch:
-        image: elasticsearch:5.6.9
+        image: daocloud.io/buxiaomo/elasticsearch:6.2.4
         ports:
             - 9200:9200/tcp
             - 9300:9300/tcp
+        configs:
+            - source: elasticsearch
+              target: /usr/local/elasticsearch/config/elasticsearch.yml
+              uid: '1000'
+              gid: '1000'
+              mode: 0660
         networks:
             elk:
                 aliases:
                     - elasticsearch
         volumes:
-            - ./elasticsearch/data:/usr/share/elasticsearch/data
+            - ./elasticsearch/data:/usr/local/elasticsearch/data
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -18,63 +24,99 @@ services:
             update_config:
                 parallelism: 1
                 delay: 10s
-            # placement:
-            #     constraints:
-            #         - node.labels.elasticsearch == true
+            placement:
+                constraints:
+                    - node.labels.elk == true
+        # healthcheck:
+        #     test: ["CMD-SHELL", "curl http://127.0.0.1:9200 &> /dev/null|| exit 1"]
+        #     interval: 10s
+        #     timeout: 5s
+        #     retries: 3
         logging:
             driver: json-file
             options:
                 max-file: '3'
                 max-size: 100m
 
-    # logstash:
-    #     image: logstash:5.6.9
-    #     command: -f /usr/share/logstash/config/conf.d/logstash.conf
-    #     networks:
-    #         elk:
-    #             aliases:
-    #                 - logstash
-    #     volumes:
-    #         - ./logstash/logstash.yml:/etc/logstash/logstash.yml:rw
-    #         - ./logstash/data:/var/lib/logstash:rw
-    #         - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
-    #     deploy:
-    #         mode: replicated
-    #         replicas: 1
-    #         update_config:
-    #             parallelism: 1
-    #             delay: 10s
-    #         # placement:
-    #         #     constraints:
-    #         #         - node.labels.elasticsearch == true
-    #     logging:
-    #         driver: json-file
-    #         options:
-    #             max-file: '3'
-    #             max-size: 100m
+    logstash:
+        image: daocloud.io/buxiaomo/logstash:6.2.4
+        command: /usr/local/logstash/bin/logstash -f /usr/local/logstash/config/nginx_log.conf
+        ports:
+            - 5043:5043/tcp
+        networks:
+            elk:
+                aliases:
+                    - logstash
+        configs:
+            - source: logstash
+              target: /usr/local/logstash/config/logstash.yml
+              uid: '1000'
+              gid: '1000'
+              mode: 0660
+            - source: logstash_nginx
+              target: /usr/local/logstash/config/nginx_log.conf
+              uid: '1000'
+              gid: '1000'
+              mode: 0660
+        volumes:
+            - ./logstash/data:/usr/local/logstash/data:rw
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.elk == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
 
-    # kibana:
-    #     image: kibana:5.6.9
-    #     networks:
-    #         elk:
-    #             aliases:
-    #                 - kibana
-    #     volumes:
-    #         - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
-    #     deploy:
-    #         mode: replicated
-    #         replicas: 1
-    #         update_config:
-    #             parallelism: 1
-    #             delay: 10s
-    #         # placement:
-    #         #     constraints:
-    #         #         - node.labels.elasticsearch == true
-    #     logging:
-    #         driver: json-file
-    #         options:
-    #             max-file: '3'
-    #             max-size: 100m
+    kibana:
+        image: daocloud.io/buxiaomo/kibana:6.2.4
+        command: /usr/local/kibana/bin/kibana
+        ports:
+            - 5601:5601/tcp
+        networks:
+            elk:
+                aliases:
+                    - kibana
+        configs:
+            - source: kibana
+              target: /usr/local/kibana/config/kibana.yml
+              uid: '1000'
+              gid: '1000'
+              mode: 0660
+        volumes:
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.elk == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
+configs:
+    elasticsearch:
+        file: ./elasticsearch/elasticsearch.yml
+    logstash:
+        file: ./logstash/logstash.yml
+    logstash_nginx:
+        file: ./logstash/logstash.conf
+    kibana:
+        file: ./kibana/kibana.yml
 
 networks:
     elk:
