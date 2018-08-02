@@ -7,10 +7,11 @@ fi
 
 # 清理数据文件
 HOST_LIST=(
-    'root@10.99.6.104'
-    'root@10.99.6.105'
-    'root@10.99.6.106'
+    'root@10.211.55.63'
+    'root@10.211.55.64'
+    'root@10.211.55.65'
 )
+
 for HOST in ${HOST_LIST[*]};
 do
     ssh ${HOST} 'rm -rf /opt/splunk/etc /opt/splunk/var'
