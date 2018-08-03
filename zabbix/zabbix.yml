@@ -50,6 +50,11 @@ services:
             nofile:
                 soft: 20000
                 hard: 40000
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
 
     web:
         image: zabbix/zabbix-web-nginx-mysql:ubuntu-3.4.4
@@ -91,6 +96,12 @@ services:
             placement:
                 constraints:
                     - node.labels.zabbix == true
+        logging:
+            driver: json-file
+            options:
+                max-file: '3'
+                max-size: 100m
+
     mysql:
         image: mysql:5.7.20
         hostname: mysql
