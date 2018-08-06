@@ -12,3 +12,6 @@
 `MYSQL_REPLICATION_USER` 设置为主库的复制用户，默认：replication
 
 `MYSQL_REPLICATION_PASSWORD` 设置为主库的复制密码，默认：replication
+
+# 服务健康检查
+修改编排 `healthcheck.test` 字段中 `-p` 参数为 `MYSQL_ROOT_PASSWORD`, 并取消注释。
