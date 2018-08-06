@@ -1,4 +1,5 @@
 # MySql主从编排
+
 通过脚本将主从配置过程Shell化并挂载到从库镜像中的 `/docker-entrypoint-initdb.d`，添加执行权限，以完成主从的配置过程，减少重新构建的步骤与管理，若想完善，直接修改 `slave/init.sh` 脚本即可。
 
 # 环境变量说明
@@ -14,4 +15,5 @@
 `MYSQL_REPLICATION_PASSWORD` 设置为主库的复制密码，默认：replication
 
 # 服务健康检查
+
 修改编排 `healthcheck.test` 字段中 `-p` 参数为 `MYSQL_ROOT_PASSWORD`, 并取消注释。

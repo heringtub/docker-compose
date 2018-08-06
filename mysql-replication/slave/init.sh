@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ex
+# 检查主从复制是否正常
 check_slave_health () {
     echo Checking replication health:
     status=$(mysql --defaults-file=/tmp/slave.cnf -e "SHOW SLAVE STATUS\G")
@@ -12,6 +13,7 @@ check_slave_health () {
     fi
     return 0
 }
+# 设置默认值
 MYSQL_MASTER_HOST=${MYSQL_MASTER_HOST:-'master'}
 MYSQL_MASTER_PASSWORD=${MYSQL_MASTER_PASSWORD:-'root'}
 MYSQL_REPLICATION_USER=${MYSQL_REPLICATION_USER:-'replication'}
@@ -33,19 +35,19 @@ port        = 3306
 host        = ${MYSQL_MASTER_HOST}
 EOF
 
+# 启动后等待5秒
 echo "* Sleep 5s then Configure replication"
 sleep 5
+# 检查主库能否连接
 mysql --defaults-file=/tmp/master.cnf -e "show databases;" > /dev/null 2>&1
 if [ $? -eq 0 ];then
+    # 判断主从是否配置，0：未配置，1：已配置
     if [ $(mysql --defaults-file=/tmp/slave.cnf -AN -e "show slave status;" | wc -l) -eq 0 ];then
-        # echo "* Reset replication Configure"
-        # mysql -h${MYSQL_REPLICATION_HOST} -uroot -p${MYSQL_MASTER_PASSWORD} -AN -e 'STOP SLAVE;'; 
-        # mysql -h${MYSQL_REPLICATION_HOST} -uroot -p${MYSQL_MASTER_PASSWORD} -AN -e 'RESET SLAVE ALL;'; 
-
+        # 创建主从复制账户
         echo "* Create replication user"
         mysql --defaults-file=/tmp/master.cnf -AN -e "GRANT FILE, SELECT, SHOW VIEW, LOCK TABLES, RELOAD, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO '${MYSQL_REPLICATION_USER}'@'%' IDENTIFIED BY '${MYSQL_REPLICATION_PASSWORD}';"
         mysql --defaults-file=/tmp/master.cnf -AN -e "FLUSH PRIVILEGES;"
-
+        # 配置主从信息
         echo "* Configure replication Info"
         # mysql --defaults-file=/tmp/slave.cnf -AN -e "RESET MASTER;"
         MYSQL_MASTER_Position=$(eval "mysql --defaults-file=/tmp/master.cnf -e 'show master status \G' | awk '/Position/{print \$2}'")
@@ -61,6 +63,7 @@ if [ $? -eq 0 ];then
             MASTER_LOG_POS=$MYSQL_MASTER_Position;"
         mysql --defaults-file=/tmp/slave.cnf -e "START SLAVE;"
 
+        # 检查主从状态，失败直接退出
         # mysql -uroot -p${MYSQL_ROOT_PASSWORD} -AN -e "show slave status\G"
         echo "* Check Replication healthy."
         counter=0
@@ -77,6 +80,7 @@ if [ $? -eq 0 ];then
 else
     exit 1
 fi
+# 安全考虑，取消主库相关信息以及临时文件
 unset MYSQL_MASTER_HOST MYSQL_MASTER_PASSWORD
 rm -rf /tmp/master.cnf /tmp/slave.cnf
 echo "* MySQL Replicate Done."
