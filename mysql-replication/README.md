@@ -6,6 +6,9 @@
 若主库设置了 `MYSQL_DATABASE` 、 `MYSQL_USER` 、 `MYSQL_PASSWORD`这几个环境变量，请复制一份到从库的环境变量中。
 
 `MYSQL_MASTER_HOST` 设置为主库的内部服务名，默认：master
+
 `MYSQL_MASTER_PASSWORD` 设置为主库的root密码，默认：root
+
 `MYSQL_REPLICATION_USER` 设置为主库的复制用户，默认：replication
+
 `MYSQL_REPLICATION_PASSWORD` 设置为主库的复制密码，默认：replication
