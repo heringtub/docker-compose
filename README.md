@@ -11,3 +11,5 @@
 | wordpress     | wp一键部署，包含redis缓存 | 高可用集群环境 |
 | elk     | ELK一键部署 | 日志分析可视化套件 |
 | splunk     | splunk集群部署编排 | 日志分析可视化套件 |
+| zabbix     | zabbix监控 | N/A |
+| mysql-replication     | MySql主从复制架构一键部署 | 主从复制架构一键部署 |
