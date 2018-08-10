@@ -1,0 +1,55 @@
+version: '3.4'
+services:
+    gitlab:
+        image: twang2218/gitlab-ce-zh:10.8.0
+        ports:
+            - 10001:80
+            - 10002:443
+            - 10003:22
+        environment:
+            TZ: 'Asia/Shanghai'
+            GITLAB_OMNIBUS_CONFIG: |
+                external_url 'http://gitlab.buxiaomo.red/'
+                gitlab_rails['time_zone'] = 'Asia/Shanghai'
+                gitlab_rails['smtp_enable'] = false
+        volumes:
+            - /mnt/nfs/gitlab/etc:/etc/gitlab
+            - /mnt/nfs/gitlab/opt:/var/opt/gitlab
+            - /mnt/nfs/gitlab/log:/var/log/gitlab
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.labels.devops == true
+        networks:
+            devops:
+                aliases:
+                    - gitlab
+    jenkins:
+        image: daocloud.io/buxiaomo/jenkins:2.89.4
+        ports:
+            - 10004:8080/tcp
+        environment:
+            - LC_ALL=C.UTF-8
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /mnt/nfs/jenkins/data:/var/jenkins:rw
+        extra_hosts:
+            - "gitlab.zdoo.com:139.198.16.162"
+        networks:
+            devops:
+                aliases:
+                    - jenkins
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 10s
+            placement:
+                constraints:
+                    - node.labels.devops == true
+networks:
+    devops:
+        external: true
