@@ -51,8 +51,8 @@ services:
         configs:
           - source: php
             target: /usr/local/etc/php/php.ini
-          - source: phpuploads
-            target: /usr/local/etc/php/conf.d/uploads.ini
+          - source: php-fpm
+            target: /usr/local/etc/php-fpm.d/www.conf
         volumes:
             - ./www:/var/www/html:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
@@ -157,13 +157,13 @@ services:
 
 configs:
     nginx:
-        file: ./nginx/nginx.conf
+        file: ./conf/nginx.conf
     php:
-        file: ./php/php.ini
-    phpuploads:
-        file: ./php/ext/uploads.ini
+        file: ./conf/php.ini
+    php-fpm:
+        file: ./php/www.conf
     mysql:
-        file: ./mysql/mysqld.cnf
+        file: ./conf/mysqld.cnf
 
 networks:
     lnmp:
