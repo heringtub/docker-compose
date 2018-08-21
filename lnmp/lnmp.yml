@@ -3,7 +3,7 @@ services:
     nginx:
         image: nginx:1.13.8-alpine
         ports:
-            - 80:80/tcp
+            - 10000:80/tcp
         networks:
             lnmp:
                 aliases:
@@ -127,7 +127,7 @@ services:
         image: phpmyadmin/phpmyadmin:4.7
         hostname: phpmyadmin
         ports:
-            - 3002:80/tcp
+            - 10001:80/tcp
         networks:
             lnmp:
                 aliases:
