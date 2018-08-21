@@ -1,41 +1,59 @@
 version: '3.4'
 services:
     nginx:
-        image: nginx:1.13.8-alpine
+        # 服务所使用的镜像
+        image: nginx:1.13.8
+        # 服务暴露的端口
         ports:
             - 10000:80/tcp
+        # 服务网络定义，以及别名
         networks:
             lnmp:
                 aliases:
                     - nginx
+        # 配置文件定义
         configs:
+          # 引用179行定义的名字
           - source: nginx
+            # 配置文件在容器内的路径
             target: /etc/nginx/nginx.conf
+          - source: timezome
+            target: /etc/localtime
+        # 主机目录映射
         volumes:
             - ./www:/var/www/html:rw
-            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        # 部署相关
         deploy:
+            # 运行模式
             mode: replicated
+            # 副本数
             replicas: 1
+            # 资源相关
             resources:
+                # 限制资源
                 limits:
                     cpus: '0.50'
                     memory: 100M
+                # 预留资源
                 reservations:
                     cpus: '0.25'
                     memory: 50M
+            # 更新服务设置
             update_config:
                 order: start-first
                 parallelism: 1
                 delay: 10s
+            # 设置服务能运行的主机    
             # placement:
             #     constraints:
             #         - node.labels.lnmp == true
+        # # 健康检查设置
         # healthcheck:
         #     test: ["CMD-SHELL", "nc -w 1 127.0.0.1 -z 80 || exit 1"]
         #     interval: 10s
         #     timeout: 5s
         #     retries: 3
+        # 日志设置
         logging:
             driver: json-file
             options:
@@ -43,7 +61,7 @@ services:
                 max-size: 100m
 
     php:
-        image: php:7.2.0-fpm-alpine3.7
+        image: php:7.2.8-fpm-stretch
         networks:
             lnmp:
                 aliases:
@@ -53,6 +71,8 @@ services:
             target: /usr/local/etc/php/php.ini
           - source: php-fpm
             target: /usr/local/etc/php-fpm.d/www.conf
+          - source: timezome
+            target: /etc/localtime
         volumes:
             - ./www:/var/www/html:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
@@ -99,6 +119,8 @@ services:
         configs:
           - source: mysql
             target: /etc/mysql/mysql.conf.d/mysqld.cnf
+          - source: timezome
+            target: /etc/localtime
         volumes:
             - ./mysql:/var/lib/mysql
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
@@ -106,17 +128,17 @@ services:
             mode: replicated
             replicas: 1
             update_config:
-                # order: start-first
+                order: stop-first
                 parallelism: 1
                 delay: 10s
             # placement:
             #     constraints:
             #         - node.labels.lnmp == true
-        # healthcheck:
-        #     test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
-        #     interval: 10s
-        #     timeout: 5s
-        #     retries: 3
+        healthcheck:
+            test: ["CMD-SHELL", "mysql -uroot -proot -An -e 'show databases;' &> /dev/null || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
         logging:
             driver: json-file
             options:
@@ -164,7 +186,8 @@ configs:
         file: ./conf/www.conf
     mysql:
         file: ./conf/mysqld.cnf
-
+    timezome:
+        file: /usr/share/zoneinfo/Asia/Shanghai
 networks:
     lnmp:
         external: true
