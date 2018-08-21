@@ -11,11 +11,17 @@ services:
             lnmp:
                 aliases:
                     - nginx
+        # 配置文件定义
+        configs:
+          # 引用179行定义的名字
+          - source: nginx
+            # 配置文件在容器内的路径
+            target: /etc/nginx/nginx.conf
+          - source: timezome
+            target: /etc/localtime
         # 主机目录映射
         volumes:
             - ./www:/var/www/html:rw
-            - ./conf/nginx.conf:/etc/nginx/nginx.conf:ro
-            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         # 部署相关
         deploy:
             # 运行模式
@@ -60,11 +66,15 @@ services:
             lnmp:
                 aliases:
                     - php
+        configs:
+          - source: php
+            target: /usr/local/etc/php/php.ini
+          - source: php-fpm
+            target: /usr/local/etc/php-fpm.d/www.conf
+          - source: timezome
+            target: /etc/localtime
         volumes:
             - ./www:/var/www/html:rw
-            - ./conf/php.ini:/usr/local/etc/php/php.ini:ro
-            - ./conf/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
             replicas: 1
@@ -105,10 +115,13 @@ services:
             - MYSQL_DATABASE=lnmp
             - MYSQL_USER=lnmp
             - MYSQL_PASSWORD=lnmp
+        configs:
+          - source: mysql
+            target: /etc/mysql/mysql.conf.d/mysqld.cnf
+          - source: timezome
+            target: /etc/localtime
         volumes:
-            - ./conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf:ro
             - ./mysql:/var/lib/mysql
-            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
             replicas: 1
@@ -171,6 +184,8 @@ configs:
         file: ./conf/www.conf
     mysql:
         file: ./conf/mysqld.cnf
+    timezome:
+        file: /usr/share/zoneinfo/Asia/Shanghai
 networks:
     lnmp:
         external: true

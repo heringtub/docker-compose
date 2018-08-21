@@ -28,7 +28,7 @@ docker node update --label-add lnmp=true node01
 docker node update --label-add mysql=true node01
 
 # 部署应用
-docker stack deploy -c lnmp.yml lnmp
+docker stack deploy -c stack.yml lnmp
 ```
 
 ​	服务访问链接：http://${HOSTIP}:10000/index.php
@@ -40,3 +40,8 @@ docker stack deploy -c lnmp.yml lnmp
 docker stack rm lnmp
 ```
 
+# 单机部署
+```
+docker network create lnmp
+docker-compose -f lnmp.yml up -d
+```
