@@ -1,19 +1,21 @@
 version: '3.4'
 services:
     master:
-        image: daocloud.io/buxiaomo/splunk:7.0.0
+        image: splunk/splunk:7.1.2
         environment:
-            - SPLUNK_START_ARGS=--accept-license --answer-yes
+            - SPLUNK_START_ARGS=--accept-license --answer-yes --seed-passwd changeme
             - SPLUNK_CMD_1=edit cluster-config -mode master -replication_factor 2 -search_factor 2 -secret admin -cluster_label swarm -auth admin:changeme
             - SPLUNK_CMD_2=set servername master -auth admin:changeme
-            - SPLUNK_CMD_3=add licenses /licenses/oem-develop-10t-08142018.license
+            - SPLUNK_CMD_3=add licenses /licenses/daocloud.license
             - SPLUNK_CMD_4=restart
         networks:
             splunk:
+        configs:
+          - source: license
+            target: /licenses/daocloud.license
         volumes:
             - /opt/splunk/var:/opt/splunk/var:rw
             - /opt/splunk/etc:/opt/splunk/etc:rw
-            - /opt/splunk/licenses:/licenses:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -31,9 +33,9 @@ services:
                 max-size: 100m
 
     indexer01:
-        image: daocloud.io/buxiaomo/splunk:7.0.0
+        image: splunk/splunk:7.1.2
         environment:
-            - SPLUNK_START_ARGS=--accept-license --answer-yes
+            - SPLUNK_START_ARGS=--accept-license --answer-yes --seed-passwd changeme
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_DEPLOYMENT_SERVER=SPLUNK_DEPLOYMENT_SERVER_IP:8089
             - SPLUNK_CMD_1=enable webserver -auth admin:changeme
@@ -63,9 +65,9 @@ services:
                 max-size: 100m
 
     indexer02:
-        image: daocloud.io/buxiaomo/splunk:7.0.0
+        image: splunk/splunk:7.1.2
         environment:
-            - SPLUNK_START_ARGS=--accept-license --answer-yes
+            - SPLUNK_START_ARGS=--accept-license --answer-yes --seed-passwd changeme
             - SPLUNK_ENABLE_LISTEN=9997
             - SPLUNK_DEPLOYMENT_SERVER=SPLUNK_DEPLOYMENT_SERVER_IP:8089
             - SPLUNK_CMD_1=enable webserver -auth admin:changeme
@@ -93,7 +95,9 @@ services:
             options:
                 max-file: '3'
                 max-size: 100m
-
+configs:
+    license:
+        file: ./daocloud.license
 networks:
     splunk:
         external:
