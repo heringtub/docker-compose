@@ -9,6 +9,11 @@ services:
             registry:
                 aliases:
                     - registry
+        configs:
+          - source: TLS_KEY
+            target: /certs/gcr.io.key
+          - source: TLS_CRT
+            target: /usr/local/etc/php-fpm.d/www.conf
         volumes:
             - /var/lib/registry:/var/lib/registry:rw
             - ./certs:/certs

@@ -3,15 +3,13 @@ services:
     ui:
         image: daocloud.io/buxiaomo/dockerregistryui
         ports:
-            - 4003:5000/tcp
+            - 10001:5000/tcp
         environment:
-            - RegistryURL=local.daocloud.io
+            - RegistryURL=hub.daoyun.rog.cn
         networks:
             registry:
                 aliases:
                     - registryui
-        volumes:
-            - /Users/momo/docker/registry/data:/var/lib/registry:rw
         deploy:
             mode: replicated
             replicas: 1
