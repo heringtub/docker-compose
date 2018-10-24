@@ -18,9 +18,9 @@ services:
             - source: gitlab
               target: /omnibus_config.rb
         volumes:
-            - ./gitlab/etc:/etc/gitlab
-            - ./gitlab/opt:/var/opt/gitlab
-            - ./gitlab/log:/var/log/gitlab
+            - ./data/gitlab/etc:/etc/gitlab
+            - ./data/gitlab/opt:/var/opt/gitlab
+            - ./data/gitlab/log:/var/log/gitlab
         deploy:
             mode: replicated
             replicas: 1
@@ -46,7 +46,7 @@ services:
             - LC_ALL=C.UTF-8
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
-            - ./jenkins:/var/jenkins:rw
+            - ./data/jenkins:/var/jenkins:rw
         deploy:
             mode: replicated
             replicas: 1
@@ -69,8 +69,8 @@ services:
                 aliases:
                     - server
         volumes:
-            - ./jira/data:/var/atlassian/jira
-            - ./jira/logs:/opt/atlassian/jira/logs
+            - ./data/jira/data:/var/atlassian/jira
+            - ./data/jira/logs:/opt/atlassian/jira/logs
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -101,7 +101,7 @@ services:
           - source: mysql
             target: /etc/mysql/mysql.conf.d/mysqld.cnf
         volumes:
-            - ./mysql:/var/lib/mysql
+            - ./data/mysql:/var/lib/mysql
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
