@@ -115,3 +115,15 @@ services:
 networks:
     minio_distributed:
         driver: overlay
+
+# mc config host add test http://10.0.3.11:9000 CA436NH8GXAC086GXFHO 'EIhM5gp68Ri/2Pqq6LIKv7pz8QofVonIAcuj7q45' S3v4
+# mc --debug mb test/docker
+
+# mc mb --region ch-docker-1 test/xiaomo
+
+# mc cp a test/xiaomo
+
+
+# mc policy test/docker
+
+# mc policy public test/docker
