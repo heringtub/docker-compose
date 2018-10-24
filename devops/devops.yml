@@ -1,7 +1,8 @@
 version: '3.4'
 services:
     gitlab:
-        image: twang2218/gitlab-ce-zh:10.8.0
+        # image: twang2218/gitlab-ce-zh:11.1
+        image: gitlab/gitlab-ce:11.2.3-ce.0
         ports:
             - 20001:80
             - 20002:443
@@ -23,6 +24,10 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            update_config:
+                order: start-first
+                parallelism: 1
+                delay: 10s
         logging:
             driver: json-file
             options:
@@ -46,6 +51,7 @@ services:
             mode: replicated
             replicas: 1
             update_config:
+                order: start-first
                 parallelism: 1
                 delay: 10s
         logging:
