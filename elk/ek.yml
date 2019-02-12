@@ -74,9 +74,9 @@ services:
 
     elasticsearch:
         image: elasticsearch:6.6.0
-        # ports:
-        #     - 9200:9200/tcp
-        #     - 9300:9300/tcp
+        ports:
+            - 9200:9200/tcp
+            - 9300:9300/tcp
         configs:
             - source: elasticsearch
               target: /usr/share/elasticsearch/config/elasticsearch.yml
