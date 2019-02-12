@@ -94,7 +94,7 @@ services:
                 aliases:
                     - elasticsearch
         volumes:
-            - ./data/elasticsearch:/usr/local/elasticsearch/data
+            - elasticsearch:/usr/local/elasticsearch/data
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -129,7 +129,7 @@ services:
             - source: redis
               target: /etc/redis.conf
         volumes:
-            - ./data/redis:/data:rw
+            - redis:/data:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -171,7 +171,7 @@ services:
               gid: '1000'
               mode: 0660
         volumes:
-            - ./data/logstash:/usr/local/logstash/data:rw
+            - logstash:/usr/local/logstash/data:rw
             - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         deploy:
             mode: replicated
@@ -201,6 +201,10 @@ configs:
         file: ./conf/kibana.yml
     redis:
         file: ./conf/redis.conf
+volumes:
+    elasticsearch: {}
+    redis: {}
+    logstash: {}
 
 networks:
     elk:
