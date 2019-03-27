@@ -20,7 +20,6 @@ services:
             - JENKINS_PASS=${JENKINS_PASS:-admin}
             # GitLab 相关配置
             - GITLAB_TOKEN=${GITLAB_TOKEN:-None}
-
             - SONAR_TOKEN=${SONAR_TOKEN:-None}
             # Jenkins 启动参数设置
             - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dfile.encoding=UTF-8 -Dhudson.model.DirectoryBrowserSupport.CSP=
@@ -29,7 +28,7 @@ services:
             - maven_cache:/root/.m2
             - gradle_cache:/root/.gradle:rw
             - /var/run/docker.sock:/var/run/docker.sock:ro
-            # - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         configs:
           - source: master
             target: /usr/share/jenkins/ref/jenkins.yaml
@@ -73,7 +72,7 @@ services:
             - slave01:/var/jenkins_home
             - maven_cache:/root/.m2
             - gradle_cache:/root/.gradle:rw
-            # - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
             - /var/run/docker.sock:/var/run/docker.sock:ro
         deploy:
             replicas: 1
@@ -112,7 +111,7 @@ services:
             - slave02:/var/jenkins_home
             - maven_cache:/root/.m2
             - gradle_cache:/root/.gradle:rw
-            # - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+            - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
             - /var/run/docker.sock:/var/run/docker.sock:ro
         deploy:
             replicas: 1
